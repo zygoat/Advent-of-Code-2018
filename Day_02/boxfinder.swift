@@ -1,4 +1,4 @@
-// Advent of Code, Day 2
+// Advent of Code, Day 2: Warehosue box finder.
 //
 // ben@zygoat.ca
 

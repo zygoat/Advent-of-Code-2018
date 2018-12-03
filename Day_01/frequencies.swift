@@ -1,4 +1,4 @@
-// Advent of Code, Day 1
+// Advent of Code, Day 1: Frequency calculator.
 //
 // ben@zygoat.ca
 
