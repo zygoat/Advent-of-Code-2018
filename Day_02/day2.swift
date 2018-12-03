@@ -35,3 +35,23 @@ for (_, count) in totalDistribution {
 }
 
 print("Part 1: the distribution is \(totalDistribution); our checksum is \(checksum).")  // 5880
+
+for boxA in boxes {
+    for boxB in boxes where boxB != boxA {
+        var mismatches = 0
+        var common = ""
+        
+        for (a, b) in zip(boxA, boxB) {
+            if a == b {
+                common.append(a)
+            } else {
+                mismatches += 1
+            }
+        }
+        
+        if mismatches == 1 {
+            print("Part 2. the matching boxes share the letters: \(common)")  // tiwcdpbseqhxryfmgkvjujvza
+            exit(0)
+        }
+    }
+}
