@@ -5,31 +5,21 @@
 import Foundation
 
 let fileURL = URL(fileURLWithPath: "./polymer.txt")
-let polymer = try! String.init(contentsOf: fileURL)
+let polymer = try! String.init(contentsOf: fileURL).replacingOccurrences(of: "\n", with: "")
 
-// Build a regular expression to do our heavy lifting.
+var reducedPolymer = polymer
+var lastReduction = ""
 
-var s = ""
-var pairs: [String] = []
-for n in UnicodeScalar("a").value ... UnicodeScalar("z").value {
-    let c = UnicodeScalar(n)!
-    let lower = String(c)
-    let upper = String(c).uppercased()
-    pairs.append(lower + upper)
-    pairs.append(upper + lower)
-}
-let search = "(" + pairs.joined(separator: "|") + "|\\s+)"
-
-let regex = try! NSRegularExpression(pattern: search, options: [])
-let mutablePolymer = NSMutableString(string: polymer)
-var matches = 0
 repeat {
-    matches = regex.replaceMatches(in: mutablePolymer,
-                                   options: [],
-                                   range: NSRange(location: 0, length: mutablePolymer.length),
-                                   withTemplate: "")
-} while matches > 0
-
-let reducedPolymer = mutablePolymer as String
+    lastReduction = reducedPolymer
+    for n in UnicodeScalar("a").value ... UnicodeScalar("z").value {
+        let c = UnicodeScalar(n)!
+        let lower = String(c)
+        let upper = String(c).uppercased()
+        for search in [(lower + upper), (upper + lower)] {
+            reducedPolymer = reducedPolymer.replacingOccurrences(of: search, with: "")
+        }
+    }
+} while reducedPolymer != lastReduction
 
 print("Part 1. The reduced polymer is \(reducedPolymer.count) units long.")
