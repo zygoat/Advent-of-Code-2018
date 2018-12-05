@@ -58,6 +58,8 @@ events.sort { $0.date < $1.date }
 
 var minutesAsleepByGuard = [Int : [Int : Int]]() // [guardNumber : [minuteOfHour : count]]
 var totalSleepByGuard = [Int : Int]() // [guardNumber : totalMinutes]
+var mostProlificSleepMinute: (guardNumber: Int, minuteOfHour: Int, count: Int) = (0, 0, 0)
+
 var currentGuard: Int?
 var asleepMinute: Int?
 
@@ -74,8 +76,16 @@ for event in events {
             let currentGuard = currentGuard
             else { preconditionFailure() }
         
-        for i in asleepMinute ..< minuteOfHour {
-            minutesAsleepByGuard[currentGuard, default: [:]][i, default: 0] += 1
+        for minute in asleepMinute ..< minuteOfHour {
+            var sleepByMinute = minutesAsleepByGuard[currentGuard, default: [:]]
+            let sleepCount = sleepByMinute[minute, default: 0] + 1
+            
+            if sleepCount > mostProlificSleepMinute.count {
+                mostProlificSleepMinute = (currentGuard, minute, sleepCount)
+            }
+            
+            sleepByMinute[minute] = sleepCount
+            minutesAsleepByGuard[currentGuard] = sleepByMinute
             totalSleepByGuard[currentGuard, default: 0] += 1
         }
     }
@@ -84,6 +94,10 @@ for event in events {
 // Determine who slept the most.
 let sleepyGuard = totalSleepByGuard.sorted { $0.value > $1.value }.first!.key
 let sleepiestMinute = minutesAsleepByGuard[sleepyGuard]!.sorted { $0.value > $1.value }.first!.key
-let product = sleepyGuard * sleepiestMinute
+let product1 = sleepyGuard * sleepiestMinute
 
-print("Part 1. Guard #\(sleepyGuard) was sleepiest, and most often at 00:\(sleepiestMinute); the product is \(product).")
+print("Part 1. Guard #\(sleepyGuard) was sleepiest, and most often at 00:\(sleepiestMinute); the product is \(product1).")
+
+let product2 = mostProlificSleepMinute.guardNumber * mostProlificSleepMinute.minuteOfHour
+
+print("Part 2. Guard #\(mostProlificSleepMinute.guardNumber) slept most regularly at 00:\(mostProlificSleepMinute.minuteOfHour); the product is \(product2).")
